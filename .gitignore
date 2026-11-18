@@ -1,0 +1,47 @@
+# Gradle / build output
+.gradle/
+build/
+out/
+classes/
+bin/
+
+# Loom / dev run directories
+run/
+runs/
+.architectury-transformer/
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+*.code-workspace
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs and crash dumps
+*.log
+logs/
+crash-reports/
+hs_err_pid*
+
+# Jars (only the Gradle wrapper jar is tracked)
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# Local notes, release assets and helper scripts (not part of the source)
+AI_MEMORY.md
+CLAUDE.md
+AGENTS.md
+.claude/
+publish/
+tools/
+
+# Copies of LICENSE that only exist to be packed into the jars
+*/src/main/resources/LICENSE_pocketsandbox

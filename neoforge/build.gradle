@@ -1,0 +1,126 @@
+plugins {
+    id 'com.gradleup.shadow'
+}
+
+architectury {
+    platformSetupLoomIde()
+    neoForge()
+}
+
+configurations {
+    common {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentNeoForge.extendsFrom common
+
+    // Files in this configuration will be bundled into the final mod jar.
+    shadowBundle {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+}
+
+repositories {
+    maven { url 'https://maven.blamejared.com' } // JEI (dev runtime only)
+    maven { // Sodium (dev runtime only, -Pdev_sodium=true)
+        url 'https://api.modrinth.com/maven'
+        content { includeGroup 'maven.modrinth' }
+    }
+    // Create + Ponder (dev runtime only, -Pdev_create=true)
+    maven { url 'https://maven.createmod.net' }
+    maven { url 'https://mvn.devos.one/snapshots' }
+    maven { url 'https://maven.ryanhcode.dev/releases' } // Sable, Simulated, Aeronautics (-Pdev_aero=true)
+    maven { url 'https://modmaven.dev' } // Mekanism (dev runtime only, -Pdev_mekanism=true)
+}
+
+dependencies {
+    neoForge "net.neoforged:neoforge:$rootProject.neoforge_version"
+    modImplementation "dev.architectury:architectury-neoforge:$rootProject.architectury_api_version"
+
+    // Dev-only: JEI at runtime so the hover key can be tested in JEI. Not a dependency of the mod.
+    // Older JEI at runtime: 19.57 needs mezz_config, which is not on this maven.
+    modLocalRuntime("mezz.jei:jei-1.21.1-neoforge:$rootProject.jei_neoforge_runtime_version") { transitive = false }
+
+    // Opt-in compatibility check (rule 5): ./gradlew :neoforge:runClient -Pdev_sodium=true
+    if (rootProject.findProperty('dev_sodium') == 'true') {
+        // Not remapped (remapping breaks nested class names in their mixins).
+        localRuntime("maven.modrinth:sodium:$rootProject.sodium_neoforge_version") { transitive = false }
+        // Shaders on top (needs Sodium): -Pdev_sodium=true -Pdev_iris=true
+        if (rootProject.findProperty('dev_iris') == 'true') {
+            localRuntime("maven.modrinth:iris:$rootProject.iris_neoforge_version") { transitive = false }
+        }
+    }
+
+    // Opt-in Ponder check: ./gradlew :neoforge:runClient -Pdev_create=true (Create is never a dependency; the
+    // Ponder bridge only uses reflection).
+    if (rootProject.findProperty('dev_create') == 'true') {
+        modLocalRuntime("com.simibubi.create:create-1.21.1:$rootProject.dev_create_version:slim") { transitive = false }
+        modLocalRuntime("net.createmod.ponder:ponder-neoforge:$rootProject.dev_ponder_version+mc1.21.1") { transitive = false }
+        // Not remapped: remapping breaks the nested class name in one of its mixins (crash once Sable uses it).
+        localRuntime("dev.engine-room.flywheel:flywheel-neoforge-1.21.1:$rootProject.dev_flywheel_version") { transitive = false }
+        modLocalRuntime("com.tterrag.registrate:Registrate:$rootProject.dev_registrate_version") { transitive = false }
+    }
+
+    // Opt-in multiblock checks (never dependencies of the mod): -Pdev_mekanism=true / -Pdev_ie=true
+    if (rootProject.findProperty('dev_mekanism') == 'true') {
+        modLocalRuntime("mekanism:Mekanism:$rootProject.dev_mekanism_version") { transitive = false }
+        // JEI page that shows Mekanism's multiblocks (reference for reading their layouts; MIT, Modrinth).
+        localRuntime("maven.modrinth:just-enough-mekanism-multiblocks:4OlLf9A1") { transitive = false }
+    }
+    if (rootProject.findProperty('dev_ie') == 'true') {
+        modLocalRuntime("blusunrize.immersiveengineering:ImmersiveEngineering:$rootProject.dev_ie_version") { transitive = false }
+        // IE's own library (it crashed with ClassNotFound: malte0811.dualcodecs.DualCodecs without it).
+        localRuntime("malte0811:DualCodecs:0.1.2") { transitive = false }
+        localRuntime("malte0811:BlockModelSplitter:3.0.0") { transitive = false }
+        // JEI page that shows IE's multiblocks (reference; MIT, Modrinth).
+        localRuntime("maven.modrinth:jei-multiblocks:kLhFXG0T") { transitive = false }
+    }
+
+    // Opt-in Create Aeronautics check (needs -Pdev_create=true too): Sable carries Veil, Rapier and Sable
+    // Companion inside its own jar (jar-in-jar).
+    if (rootProject.findProperty('dev_aero') == 'true') {
+        modLocalRuntime("dev.ryanhcode.sable:sable-neoforge-1.21.1:$rootProject.dev_sable_version") { transitive = false }
+        modLocalRuntime("dev.simulated_team.simulated:simulated-neoforge-1.21.1:$rootProject.dev_aeronautics_version") { transitive = false }
+        modLocalRuntime("dev.eriksonn.aeronautics:aeronautics-neoforge-1.21.1:$rootProject.dev_aeronautics_version") { transitive = false }
+        // Sable's and Veil's jar-in-jar contents are not picked up in dev: listed one by one.
+        modLocalRuntime("foundry.veil:veil-neoforge-1.21.1:4.3.2") { transitive = false }
+        modLocalRuntime("dev.ryanhcode.sable-companion:sable-companion-common-1.21.1:1.6.0") { transitive = false }
+        // Rapier (the real physics) is a GAMELIBRARY found by FML on the plain class path; as a runtime library it
+        // was invisible and Sable fell back to its no-physics pipeline.
+        localRuntime("dev.ryanhcode.sable:sable-sable_rapier-1.21.1:$rootProject.dev_sable_version") { transitive = false }
+        forgeRuntimeLibrary("io.github.ocelot:glsl-processor:0.2.3") { transitive = false }
+        forgeRuntimeLibrary("gg.moonflower:molang-compiler:3.1.1.19") { transitive = false }
+    }
+
+    common(project(path: ':common', configuration: 'namedElements')) { transitive false }
+    shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
+}
+
+processResources {
+    inputs.property 'version', project.version
+
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand version: project.version
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadowBundle]
+    archiveClassifier = 'dev-shadow'
+}
+
+remapJar {
+    input.set shadowJar.archiveFile
+}
+
+// Fixed dev player name: the offline UUID (and so the test world session) stays the same between runs.
+loom {
+    runs {
+        client {
+            programArgs "--username", "Dev"
+        }
+    }
+}

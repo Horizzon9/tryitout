@@ -1,0 +1,52 @@
+architectury {
+    common rootProject.enabled_platforms.split(',')
+}
+
+repositories {
+    maven { url 'https://maven.blamejared.com' }              // JEI
+    maven { url 'https://maven.terraformersmc.com/releases' } // EMI
+}
+
+dependencies {
+    // Only used for @Environment and similar annotations; not bundled.
+    modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+    modImplementation "dev.architectury:architectury:$rootProject.architectury_api_version"
+
+    // Recipe viewers: compile-only. Their plugin classes are only loaded by JEI/EMI themselves.
+    modCompileOnly "mezz.jei:jei-1.21.1-common-api:$rootProject.jei_api_version"
+    modCompileOnly "dev.emi:emi-xplat-intermediary:$rootProject.emi_version:api"
+
+    testImplementation platform("org.junit:junit-bom:$rootProject.junit_version")
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
+    // If the project lives under a folder with non-ASCII characters, Gradle's test worker cannot load
+    // classes from there, so compiled classes are copied to an ASCII temp folder first.
+    def asciiStageMain = file("${System.getProperty('java.io.tmpdir')}/pocketsandbox_test_stage/main")
+    def asciiStageTest = file("${System.getProperty('java.io.tmpdir')}/pocketsandbox_test_stage/test")
+    classpath = files(asciiStageTest, asciiStageMain) + classpath
+    outputs.upToDateWhen { false }
+    doFirst {
+        delete(asciiStageMain, asciiStageTest)
+        copy {
+            from sourceSets.main.output.classesDirs
+            from sourceSets.main.output.resourcesDir
+            into asciiStageMain
+        }
+        copy {
+            from sourceSets.test.output.classesDirs
+            into asciiStageTest
+        }
+    }
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+        exceptionFormat 'full'
+    }
+}
+
+tasks.named('build') {
+    dependsOn 'test'
+}
