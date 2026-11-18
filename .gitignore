@@ -44,4 +44,4 @@ publish/
 tools/
 
 # Copies of LICENSE that only exist to be packed into the jars
-*/src/main/resources/LICENSE_pocketsandbox
+*/src/main/resources/LICENSE_tryitout

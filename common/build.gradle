@@ -25,8 +25,8 @@ tasks.named('test', Test) {
     useJUnitPlatform()
     // If the project lives under a folder with non-ASCII characters, Gradle's test worker cannot load
     // classes from there, so compiled classes are copied to an ASCII temp folder first.
-    def asciiStageMain = file("${System.getProperty('java.io.tmpdir')}/pocketsandbox_test_stage/main")
-    def asciiStageTest = file("${System.getProperty('java.io.tmpdir')}/pocketsandbox_test_stage/test")
+    def asciiStageMain = file("${System.getProperty('java.io.tmpdir')}/tryitout_test_stage/main")
+    def asciiStageTest = file("${System.getProperty('java.io.tmpdir')}/tryitout_test_stage/test")
     classpath = files(asciiStageTest, asciiStageMain) + classpath
     outputs.upToDateWhen { false }
     doFirst {

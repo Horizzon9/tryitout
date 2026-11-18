@@ -7,7 +7,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'pocketsandbox'
+rootProject.name = 'tryitout'
 
 include 'common'
 include 'fabric'

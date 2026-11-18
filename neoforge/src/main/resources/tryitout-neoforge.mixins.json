@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.ufuk.tryitout.neoforge.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "mixins": [],
+  "client": [
+    "ClientLevelLoadEventMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

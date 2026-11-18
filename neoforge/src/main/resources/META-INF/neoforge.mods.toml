@@ -4,9 +4,9 @@ issueTrackerURL = ""
 license = "MPL-2.0"
 
 [[mods]]
-modId = "pocketsandbox"
+modId = "tryitout"
 version = "${version}"
-displayName = "Test Room"
+displayName = "TryItOut"
 authors = "ufuk"
 # Optional on both sides: the pocket scene is client-only; the test world needs it on the server too.
 displayTest = "IGNORE_ALL_VERSION"
@@ -16,26 +16,26 @@ With the mod on the server too, a separate test world can be used.
 '''
 
 [[mixins]]
-config = "pocketsandbox.mixins.json"
+config = "tryitout.mixins.json"
 
 [[mixins]]
-config = "pocketsandbox-neoforge.mixins.json"
+config = "tryitout-neoforge.mixins.json"
 
-[[dependencies.pocketsandbox]]
+[[dependencies.tryitout]]
 modId = "neoforge"
 type = "required"
 versionRange = "[21.1,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.pocketsandbox]]
+[[dependencies.tryitout]]
 modId = "minecraft"
 type = "required"
 versionRange = "[1.21.1,1.21.2)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.pocketsandbox]]
+[[dependencies.tryitout]]
 modId = "architectury"
 type = "required"
 versionRange = "[13.0.0,)"

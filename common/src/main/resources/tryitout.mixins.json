@@ -1,0 +1,36 @@
+{
+  "required": true,
+  "package": "com.ufuk.tryitout.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "mixins": [
+    "ArmorStandAccessor",
+    "TestAdvancementsMixin",
+    "TestBodyMixin",
+    "TestBorderCollisionMixin",
+    "TestCommandsMixin",
+    "TestEntityRulesMixin",
+    "TestExplosionMixin",
+    "TestFallingFloorMixin",
+    "TestFluidMixin",
+    "TestLevelGuardMixin",
+    "TestLevelTimeMixin",
+    "TestPlayerRulesMixin",
+    "TestServerLevelMixin"
+  ],
+  "client": [
+    "AbstractContainerScreenAccessor",
+    "ConnectionMixin",
+    "DummyRenderMixin",
+    "LightTextureMixin",
+    "LocalPlayerMixin",
+    "MultiPlayerGameModeMixin",
+    "PoseStackAccessor",
+    "TestDebugKeysMixin",
+    "TestGameModeSwitcherMixin",
+    "TestRenderGuardMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

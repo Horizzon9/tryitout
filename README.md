@@ -1,4 +1,4 @@
-# Test Room
+# TryItOut
 
 **Try any block or item without leaving your world.** Hover it in your inventory, JEI or EMI, hold `W`, and a small
 interactive room opens on top of your game. With the mod on the server too, a separate **Test World** dimension
@@ -37,7 +37,7 @@ Dev clients (the optional mods are never dependencies, they are only added to th
 
 - `common/` shared code (scene, rendering, test world, networking, screens) and the shared tests
 - `neoforge/` and `fabric/` loader entry points and loader-specific mixins
-- the mod id is `pocketsandbox`
+- the mod id is `tryitout`
 
 ## License
 
